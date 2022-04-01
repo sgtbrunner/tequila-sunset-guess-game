@@ -1,26 +1,50 @@
-import { StyleSheet, TextInput, View } from 'react-native';
+import { useState } from 'react';
+import { Alert, StyleSheet, TextInput, View } from 'react-native';
 
 import PrimaryButton from '../components/PrimaryButton';
 
-const StartGameScreen = () => (
-  <View style={styles.inputContainer}>
-    <TextInput
-      style={styles.numberInput}
-      maxLength={2}
-      keyboardType='number-pad'
-      autoCapitalize='none'
-      autoCorrect={false}
-    />
-    <View style={styles.buttonsContainer}>
-      <View style={styles.buttonContainer}>
-        <PrimaryButton>Reset</PrimaryButton>
-      </View>
-      <View style={styles.buttonContainer}>
-        <PrimaryButton>Confirm</PrimaryButton>
+const StartGameScreen = () => {
+  const [enteredNumber, setEnteredNumber] = useState('');
+
+  const resetInputHandler = () => {
+    setEnteredNumber('');
+  };
+
+  const confirmInputHandler = () => {
+    const choseNumber = parseInt(enteredNumber);
+
+    if (isNaN(choseNumber) || choseNumber < 0 || choseNumber > 99) {
+      Alert.alert('Invalid Number', 'Must be a number between 1 an 99', [
+        { text: 'Okay', onPress: resetInputHandler, style: 'destructive' },
+      ]);
+      return;
+    }
+
+    console.log('Valid Number: ', choseNumber);
+  };
+
+  return (
+    <View style={styles.inputContainer}>
+      <TextInput
+        style={styles.numberInput}
+        maxLength={2}
+        keyboardType='number-pad'
+        autoCapitalize='none'
+        autoCorrect={false}
+        onChangeText={setEnteredNumber}
+        value={enteredNumber}
+      />
+      <View style={styles.buttonsContainer}>
+        <View style={styles.buttonContainer}>
+          <PrimaryButton onPress={resetInputHandler}>Reset</PrimaryButton>
+        </View>
+        <View style={styles.buttonContainer}>
+          <PrimaryButton onPress={confirmInputHandler}>Confirm</PrimaryButton>
+        </View>
       </View>
     </View>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   inputContainer: {
