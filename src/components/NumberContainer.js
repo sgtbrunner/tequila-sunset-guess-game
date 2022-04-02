@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   numberText: {
     color: Colors.white,
     fontSize: 36,
-    fontWeight: 'bold',
+    fontFamily: 'open-sans-bold',
   },
 });
 
