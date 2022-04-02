@@ -14,6 +14,7 @@ const BackgroundImage = require('./assets/images/background.png');
 export default function App() {
   const [userNumber, setUserNumber] = useState(null);
   const [gameIsOver, setGameIsOver] = useState(true);
+  const [roundsNumber, setRoundsNumber] = useState(0);
 
   const [fontsLoaded] = useFonts({
     'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
@@ -25,17 +26,31 @@ export default function App() {
     setGameIsOver(false);
   };
 
+  const gameOverHandler = (numberOfRounds) => {
+    setRoundsNumber(numberOfRounds);
+    setGameIsOver(true);
+  };
+
+  const onStartNewGame = () => {
+    setUserNumber(null);
+    setRoundsNumber(0);
+  };
+
   let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
 
   if (userNumber)
     screen = (
-      <GameScreen
-        userNumber={userNumber}
-        onGameOver={() => setGameIsOver(true)}
-      />
+      <GameScreen userNumber={userNumber} onGameOver={gameOverHandler} />
     );
 
-  if (gameIsOver && userNumber) screen = <GameOverScreen />;
+  if (gameIsOver && userNumber)
+    screen = (
+      <GameOverScreen
+        userNumber={userNumber}
+        roundsNumber={roundsNumber}
+        onStartNewGame={onStartNewGame}
+      />
+    );
 
   return !fontsLoaded ? (
     <AppLoading />
