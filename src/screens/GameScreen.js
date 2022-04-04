@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
+import {
+  Alert,
+  FlatList,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+  Platform,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import Card from '../components/Card';
@@ -28,6 +35,7 @@ const GameScreen = ({ userNumber, onGameOver }) => {
   });
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
   const [guessRounds, setGuessRounds] = useState([initialGuess]);
+  const { width } = useWindowDimensions();
   const guessRoundsListLength = guessRounds.length;
 
   useEffect(() => {
@@ -65,15 +73,14 @@ const GameScreen = ({ userNumber, onGameOver }) => {
     ]);
   };
 
-  return (
-    <View style={styles.screen}>
-      <Title>Opponent's Guess</Title>
+  let content = (
+    <>
       <NumberContainer>{currentGuess}</NumberContainer>
-      <Card style={styles.card}>
+      <Card>
         <InstructionText style={styles.instructionText}>
           Lower or higher?
         </InstructionText>
-        <View style={styles.buttonsContainer}>
+        <View style={styles.buttonsContainerWide}>
           <View style={styles.buttonContainer}>
             <PrimaryButton
               onPress={() => nextGuessHandler({ direction: 'lower' })}
@@ -90,6 +97,37 @@ const GameScreen = ({ userNumber, onGameOver }) => {
           </View>
         </View>
       </Card>
+    </>
+  );
+
+  if (width > 500) {
+    content = (
+      <>
+        <View style={styles.buttonsContainerWide}>
+          <View style={styles.buttonContainer}>
+            <PrimaryButton
+              onPress={() => nextGuessHandler({ direction: 'lower' })}
+            >
+              <Ionicons name='md-remove' size={24} color='white' />
+            </PrimaryButton>
+          </View>
+          <NumberContainer>{currentGuess}</NumberContainer>
+          <View style={styles.buttonContainer}>
+            <PrimaryButton
+              onPress={() => nextGuessHandler({ direction: 'greater' })}
+            >
+              <Ionicons name='md-add' size={24} color='white' />
+            </PrimaryButton>
+          </View>
+        </View>
+      </>
+    );
+  }
+
+  return (
+    <View style={styles.screen}>
+      <Title>Opponent's Guess</Title>
+      {content}
       <View style={styles.listContainer}>
         <FlatList
           data={guessRounds}
@@ -109,16 +147,19 @@ const GameScreen = ({ userNumber, onGameOver }) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    padding: 40,
-  },
-  card: {
-    marginTop: 50,
+    padding: 24,
+    marginTop: Platform.select({ android: 50 }),
+    alignItems: 'center',
   },
   instructionText: {
     marginBottom: 12,
   },
   buttonsContainer: {
     flexDirection: 'row',
+  },
+  buttonsContainerWide: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   buttonContainer: {
     flex: 1,
